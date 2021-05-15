@@ -6,20 +6,10 @@ export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 export function getFactoryAddress(): string {
   let network = dataSource.network() as string
   // not using a switch-case because using strings is not yet supported (only u32)
-  if (network == 'mainnet') return '0xd34971BaB6E5E356fd250715F5dE0492BB070452'
-  if (network == 'rinkeby') return '0x02f45e773436C6D96Cc73600fe94a660ec67734C'
-  if (network == 'xdai') return '0x5d48c95adffd4b40c1aaadc4e08fc44117e02179'
+  if (network == 'mainnet') return '0xd34971bab6e5e356fd250715f5de0492bb070452'
+  if (network == 'xdai') return '0xa818b4f111ccac7aa31d0bcc0806d64f2e0737d7'
+  if (network == 'matic') return '0x6f937495013c7dc42af752d3e0bcc090bd34f7ab'
   log.warning('no factory address for unsupported network {}', [network])
-  return ADDRESS_ZERO
-}
-
-export function getStakingRewardsFactoryAddress(): string {
-  let network = dataSource.network() as string
-  // not using a switch-case because using strings is not yet supported (only u32)
-  if (network == 'mainnet') return ADDRESS_ZERO
-  if (network == 'rinkeby') return '0xabd8180cdde7f40aa87490b3ffb7323d9202f08a'
-  if (network == 'xdai') return '0xcd2a45f36464fdb1065160e03a2353996ea8ff57'
-  log.warning('no staking rewards factory address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
 
@@ -27,8 +17,8 @@ export function getNativeCurrencyWrapperAddress(): string {
   let network = dataSource.network() as string
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
-  if (network == 'rinkeby') return '0xc778417e063141139fce010982780140aa0cd5ab'
   if (network == 'xdai') return '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d'
+  if (network == 'matic') return '0x4c28f48448720e9000907bc2611f73022fdce1fa'
   log.warning('no native currency wrapper address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
@@ -61,17 +51,18 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
       '0xd533a949740bb3306d119cc777fa900ba034cd52' // CRV
     ]
   }
-  if (network == 'rinkeby') {
-    return [
-      '0x554898a0bf98ab0c03ff86c7dccbe29269cc4d29', // DXD
-      '0xc778417e063141139fce010982780140aa0cd5ab' // WETH
-    ]
-  }
   if (network == 'xdai') {
     return [
       '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d', // WXDAI
+      '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', // HNY
+      '0x3a97704a1b25f08aa230ae53b352e2e72ef52843', // AGVE
       '0xb90d6bec20993be5d72a5ab353343f7a0281f158', // DXD
       '0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1' // WETH
+    ]
+  }
+  if (network == 'matic') {
+    return [
+      '0x4c28f48448720e9000907bc2611f73022fdce1fa' // WMATIC
     ]
   }
   log.warning('no liquidity tracking token address for unsupported network {}', [network])
@@ -82,8 +73,8 @@ export function getUsdcNativeCurrencyWrapperPairAddress(): string {
   let network = dataSource.network() as string
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0x98f29f527c8e0ecc67a3c2d5567833bee01f2a12'
-  if (network == 'rinkeby') return '0xf3a261b601cd965cd18a5618c436a899c9abed51'
   if (network == 'xdai') return ADDRESS_ZERO
+  if (network == 'matic') return ADDRESS_ZERO
   log.warning('no usdc native currency wrapper pair address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
@@ -92,8 +83,8 @@ export function getDaiNativeCurrencyWrapperPairAddress(): string {
   let network = dataSource.network() as string
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0x7515be43d16f871588adc135d58a9c30a71eb34f'
-  if (network == 'rinkeby') return ADDRESS_ZERO
   if (network == 'xdai') return ADDRESS_ZERO
+  if (network == 'matic') return ADDRESS_ZERO
   log.warning('no dai native currency wrapper pair address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
@@ -102,8 +93,8 @@ export function getUsdtNativeCurrencyWrapperPair(): string {
   let network = dataSource.network() as string
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0x83dd8227c5ef121f2ae99c6f1df0aa9e914448ce'
-  if (network == 'rinkeby') return ADDRESS_ZERO
   if (network == 'xdai') return ADDRESS_ZERO
+  if (network == 'matic') return ADDRESS_ZERO
   log.warning('no usdt native currency wrapper pair address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }

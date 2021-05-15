@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { log } from '@graphprotocol/graph-ts'
-import { SwaprFactory, Pair, Token, Bundle } from '../types/schema'
+import { HoneyswapFactory, Pair, Token, Bundle } from '../types/schema'
 import { PairCreated } from '../types/Factory/Factory'
 import { Pair as PairTemplate } from '../types/templates'
 import {
@@ -16,9 +16,9 @@ import { getFactoryAddress } from '../commons/addresses'
 export function handleNewPair(event: PairCreated): void {
   // load factory (create if first exchange)
   let factoryAddress = getFactoryAddress()
-  let factory = SwaprFactory.load(factoryAddress)
+  let factory = HoneyswapFactory.load(factoryAddress)
   if (factory === null) {
-    factory = new SwaprFactory(factoryAddress)
+    factory = new HoneyswapFactory(factoryAddress)
     factory.pairCount = 0
     factory.totalVolumeNativeCurrency = ZERO_BD
     factory.totalLiquidityNativeCurrency = ZERO_BD
