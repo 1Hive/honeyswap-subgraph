@@ -9,9 +9,7 @@ import {
   Token,
   LiquidityPosition,
   LiquidityPositionSnapshot,
-  Pair,
-  LiquidityMiningCampaign,
-  LiquidityMiningPosition
+  Pair
 } from '../types/schema'
 import { Factory as FactoryContract } from '../types/templates/Pair/Factory'
 import { getFactoryAddress } from '../commons/addresses'
@@ -166,24 +164,6 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
   }
   if (liquidityTokenBalance === null) log.error('LiquidityTokenBalance is null', [id])
   return liquidityTokenBalance as LiquidityPosition
-}
-
-export function getOrCreateLiquidityMiningPosition(
-  campaign: LiquidityMiningCampaign,
-  pair: Pair,
-  user: Address
-): LiquidityMiningPosition {
-  let id = campaign.id.concat('-').concat(user.toHexString())
-  let position = LiquidityMiningPosition.load(id)
-  if (position === null) {
-    position = new LiquidityMiningPosition(id)
-    position.liquidityMiningCampaign = campaign.id
-    position.targetedPair = pair.id
-    position.stakedAmount = ZERO_BD
-    position.user = user.toHexString()
-    position.save()
-  }
-  return position as LiquidityMiningPosition
 }
 
 export function createUser(address: Address): void {

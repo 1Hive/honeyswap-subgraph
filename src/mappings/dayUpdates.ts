@@ -1,32 +1,32 @@
 import { PairHourData } from './../types/schema'
 /* eslint-disable prefer-const */
 import { BigInt, BigDecimal, ethereum } from '@graphprotocol/graph-ts'
-import { Pair, Bundle, Token, SwaprFactory, SwaprDayData, PairDayData, TokenDayData } from '../types/schema'
+import { Pair, Bundle, Token, HoneyswapFactory, HoneyswapDayData, PairDayData, TokenDayData } from '../types/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI } from './helpers'
 import { getFactoryAddress } from '../commons/addresses'
 
-export function updateSwaprDayData(event: ethereum.Event): SwaprDayData {
-  let swapr = SwaprFactory.load(getFactoryAddress())
+export function updateHoneyswapDayData(event: ethereum.Event): HoneyswapDayData {
+  let honeyswap = HoneyswapFactory.load(getFactoryAddress())
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
-  let swaprDayData = SwaprDayData.load(dayID.toString())
-  if (swaprDayData === null) {
-    swaprDayData = new SwaprDayData(dayID.toString())
-    swaprDayData.date = dayStartTimestamp
-    swaprDayData.dailyVolumeUSD = ZERO_BD
-    swaprDayData.dailyVolumeNativeCurrency = ZERO_BD
-    swaprDayData.totalVolumeUSD = ZERO_BD
-    swaprDayData.totalVolumeNativeCurrency = ZERO_BD
-    swaprDayData.dailyVolumeUntracked = ZERO_BD
+  let honeyswapDayData = HoneyswapDayData.load(dayID.toString())
+  if (honeyswapDayData === null) {
+    honeyswapDayData = new HoneyswapDayData(dayID.toString())
+    honeyswapDayData.date = dayStartTimestamp
+    honeyswapDayData.dailyVolumeUSD = ZERO_BD
+    honeyswapDayData.dailyVolumeNativeCurrency = ZERO_BD
+    honeyswapDayData.totalVolumeUSD = ZERO_BD
+    honeyswapDayData.totalVolumeNativeCurrency = ZERO_BD
+    honeyswapDayData.dailyVolumeUntracked = ZERO_BD
   }
 
-  swaprDayData.totalLiquidityUSD = swapr.totalLiquidityUSD
-  swaprDayData.totalLiquidityNativeCurrency = swapr.totalLiquidityNativeCurrency
-  swaprDayData.txCount = swapr.txCount
-  swaprDayData.save()
+  honeyswapDayData.totalLiquidityUSD = honeyswap.totalLiquidityUSD
+  honeyswapDayData.totalLiquidityNativeCurrency = honeyswap.totalLiquidityNativeCurrency
+  honeyswapDayData.txCount = honeyswap.txCount
+  honeyswapDayData.save()
 
-  return swaprDayData as SwaprDayData
+  return honeyswapDayData as HoneyswapDayData
 }
 
 export function updatePairDayData(event: ethereum.Event): PairDayData {
