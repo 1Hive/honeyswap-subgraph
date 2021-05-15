@@ -1,4 +1,4 @@
-type SwaprFactory @entity {
+type HoneyswapFactory @entity {
   # factory address
   id: ID!
 
@@ -89,7 +89,6 @@ type Pair @entity {
   # derived fields
   pairHourData: [PairHourData!]! @derivedFrom(field: "pair")
   liquidityPositions: [LiquidityPosition!]! @derivedFrom(field: "pair")
-  liquidityMiningCampaigns: [LiquidityMiningCampaign!]! @derivedFrom(field: "stakablePair")
   liquidityPositionSnapshots: [LiquidityPositionSnapshot!]! @derivedFrom(field: "pair")
   mints: [Mint!]! @derivedFrom(field: "pair")
   burns: [Burn!]! @derivedFrom(field: "pair")
@@ -107,14 +106,6 @@ type LiquidityPosition @entity {
   user: User!
   pair: Pair!
   liquidityTokenBalance: BigDecimal!
-}
-
-type LiquidityMiningPosition @entity {
-  id: ID!
-  user: User!
-  targetedPair: Pair!
-  stakedAmount: BigDecimal!
-  liquidityMiningCampaign: LiquidityMiningCampaign!
 }
 
 # saved over time for return calculations, gets created and never updated
@@ -223,8 +214,8 @@ type Bundle @entity {
   nativeCurrencyPrice: BigDecimal! # price of native currency usd
 }
 
-# Data accumulated and condensed into day stats for all of Swapr
-type SwaprDayData @entity {
+# Data accumulated and condensed into day stats for all of Honeyswap
+type HoneyswapDayData @entity {
   id: ID! # timestamp rounded to current day by dividing by 86400
   date: Int!
 
@@ -302,68 +293,4 @@ type TokenDayData @entity {
 
   # price stats
   priceUSD: BigDecimal!
-}
-
-# Staking rewards distribution factory
-type SwaprStakingRewardsFactory @entity {
-  # factory address
-  id: ID!
-  initializedCampaignsCount: Int!
-}
-
-# Liquidity mining campaign
-type LiquidityMiningCampaign @entity {
-  # campaign address
-  id: ID!
-  initialized: Boolean!
-  owner: Bytes!
-  startsAt: BigInt!
-  endsAt: BigInt!
-  duration: BigInt!
-  locked: Boolean!
-  stakablePair: Pair!
-  rewardTokens: [Token!]!
-  rewardAmounts: [BigDecimal!]!
-  stakedAmount: BigDecimal!
-  stakingCap: BigDecimal!
-  liquidityMiningPositions: [LiquidityMiningPosition!]! @derivedFrom(field: "liquidityMiningCampaign")
-  deposits: [Deposit!]! @derivedFrom(field: "liquidityMiningCampaign")
-  withdrawals: [Withdrawal!]! @derivedFrom(field: "liquidityMiningCampaign")
-  claims: [Claim!]! @derivedFrom(field: "liquidityMiningCampaign")
-  recoveries: [Recovery!]! @derivedFrom(field: "liquidityMiningCampaign")
-}
-
-# LP tokens staking
-type Deposit @entity {
-  id: ID!
-  user: Bytes!
-  timestamp: BigInt!
-  liquidityMiningCampaign: LiquidityMiningCampaign!
-  amount: BigDecimal!
-}
-
-# LP tokens withdrawing
-type Withdrawal @entity {
-  id: ID!
-  user: Bytes!
-  timestamp: BigInt!
-  liquidityMiningCampaign: LiquidityMiningCampaign!
-  amount: BigDecimal!
-}
-
-# Reward tokens claiming
-type Claim @entity {
-  id: ID!
-  user: Bytes!
-  timestamp: BigInt!
-  liquidityMiningCampaign: LiquidityMiningCampaign!
-  amounts: [BigDecimal!]!
-}
-
-# Reward tokens recovery from distribution owner
-type Recovery @entity {
-  id: ID!
-  timestamp: BigInt!
-  liquidityMiningCampaign: LiquidityMiningCampaign!
-  amounts: [BigDecimal!]!
 }

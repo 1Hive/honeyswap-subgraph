@@ -1,22 +1,18 @@
 {
   "name": "swapr-subgraph",
   "version": "1.0.0",
-  "repository": "https://github.com/nicoelzer/swapr-subgraph",
+  "repository": "https://github.com/1Hive/honeyswap-subgraph",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "codegen:mainnet": "graph codegen --output-dir src/types/",
-    "codegen:rinkeby": "graph codegen subgraph.rinkeby.yaml --output-dir src/types/",
+    "codegen:polygon": "graph codegen subgraph.polygon.yaml --output-dir src/types/",
     "codegen:xdai": "graph codegen subgraph.xdai.yaml --output-dir src/types/",
-    "build:mainnet": "graph build",
-    "build:rinkeby": "graph build subgraph.rinkeby.yaml",
+    "build:polygon": "graph build subgraph.polygon.yaml",
     "build:xdai": "graph build subgraph.xdai.yaml",
     "create-local": "graph create nicoelzer/swapr --node http://127.0.0.1:8020",
-    "deploy-local:rinkeby": "graph deploy nicoelzer/swapr subgraph.rinkeby.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
-    "deploy-local:mainnet": "graph deploy nicoelzer/swapr subgraph.rinkeby.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "deploy-local:polygon": "graph deploy nicoelzer/swapr subgraph.polygon.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy-local:xdai": "graph deploy nicoelzer/swapr subgraph.xdai.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
-    "deploy:rinkeby": "graph deploy luzzif/swapr_rinkeby subgraph.rinkeby.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
-    "deploy:xdai": "graph deploy luzzif/swapr-xdai subgraph.xdai.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
-    "deploy:mainnet-alpha": "graph deploy luzzif/swapr-mainnet-alpha subgraph.mainnet.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug"
+    "deploy:polygon": "graph deploy luzzif/swapr_polygon subgraph.polygon.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
+    "deploy:xdai": "graph deploy luzzif/swapr-xdai subgraph.xdai.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.19.0",
