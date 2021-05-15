@@ -1,14 +1,14 @@
-# Swapr Subgraph
+# Honeyswap Subgraph
 
-[Swapr](https://swapr.eth.link) is a decentralized protocol for automated token exchange on Ethereum.
+[Honeyswap](https://app.honeyswap.org) is a decentralized protocol for automated token exchange on xDai/Polygon.
 
-This subgraph dynamically tracks any pair created by the swapr factory. It tracks of the current state of Swapr contracts, and contains derived stats for things like historical data and USD prices.
+This subgraph dynamically tracks any pair created by the honeyswap factory. It tracks of the current state of Honeyswap contracts, and contains derived stats for things like historical data and USD prices.
 
 - aggregated data across pairs and tokens,
 - data on individual pairs and tokens,
 - data on transactions
 - data on liquidity providers
-- historical data on Swapr, pairs or tokens, aggregated by day
+- historical data on Honeyswap, pairs or tokens, aggregated by day
 
 ## Running Locally
 
@@ -16,13 +16,13 @@ Make sure to update package.json settings to point to your own graph account.
 
 ## Queries
 
-Below are a few ways to show how to query the swapr-subgraph for data. The queries show most of the information that is queryable, but there are many other filtering options that can be used, just check out the [querying api](https://thegraph.com/docs/graphql-api). These queries can be used locally or in The Graph Explorer playground.
+Below are a few ways to show how to query the honeyswap-subgraph for data. The queries show most of the information that is queryable, but there are many other filtering options that can be used, just check out the [querying api](https://thegraph.com/docs/graphql-api). These queries can be used locally or in The Graph Explorer playground.
 
 ## Key Entity Overviews
 
-#### SwaprFactory
+#### HoneyswapFactory
 
-Contains data across all of Swapr. This entity tracks important things like total liquidity (in ETH and USD, see below), all time volume, transaction count, number of pairs and more.
+Contains data across all of Honeyswap. This entity tracks important things like total liquidity (in ETH and USD, see below), all time volume, transaction count, number of pairs and more.
 
 #### Token
 
@@ -34,7 +34,7 @@ Contains data on a specific pair.
 
 #### Transaction
 
-Every transaction on Swapr is stored. Each transaction contains an array of mints, burns, and swaps that occured within it.
+Every transaction on Honeyswap is stored. Each transaction contains an array of mints, burns, and swaps that occured within it.
 
 #### Mint, Burn, Swap
 
@@ -42,13 +42,13 @@ These contain specifc information about a transaction. Things like which pair tr
 
 ## Example Queries
 
-### Querying Aggregated Swapr Data
+### Querying Aggregated Honeyswap Data
 
-This query fetches aggredated data from all swapr pairs and tokens, to give a view into how much activity is happening within the whole protocol.
+This query fetches aggredated data from all honeyswap pairs and tokens, to give a view into how much activity is happening within the whole protocol.
 
 ```graphql
 {
-  swaprFactories(first: 1) {
+  honeyswapFactories(first: 1) {
     pairCount
     totalVolumeUSD
     totalLiquidityUSD
