@@ -1,6 +1,6 @@
 specVersion: 0.0.2
-description: Swapr is a decentralized protocol for automated token exchange on Ethereum.
-repository: https://github.com/nicoelzer/swapr-subgraph
+description: Honeyswap is a decentralized protocol for automated token exchange on Ethereum.
+repository: https://github.com/1Hive/honeyswap-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
