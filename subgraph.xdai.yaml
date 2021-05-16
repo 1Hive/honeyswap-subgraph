@@ -1,5 +1,5 @@
 specVersion: 0.0.2
-description: Honeyswap is a decentralized protocol for automated token exchange on Ethereum.
+description: Honeyswap is a decentralized protocol for automated token exchange on xDai/Polygon.
 repository: https://github.com/1Hive/honeyswap-subgraph
 schema:
   file: ./schema.graphql
