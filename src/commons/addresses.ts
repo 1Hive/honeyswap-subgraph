@@ -18,7 +18,7 @@ export function getNativeCurrencyWrapperAddress(): string {
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
   if (network == 'xdai') return '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d'
-  if (network == 'matic') return '0x4c28f48448720e9000907bc2611f73022fdce1fa'
+  if (network == 'matic') return '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
   log.warning('no native currency wrapper address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
