@@ -62,7 +62,12 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
   }
   if (network == 'matic') {
     return [
-      '0x4c28f48448720e9000907bc2611f73022fdce1fa' // WMATIC
+      '0x4c28f48448720e9000907bc2611f73022fdce1fa', // WMATIC
+      '0xb371248dd0f9e4061ccf8850e9223ca48aa7ca4b', // HNY
+      '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
+      '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC
+      '0xcB1e72786A6eb3b44C2a2429e317c8a2462CFeb1', // DAI
+      '0x714550C2C1Ea08688607D86ed8EeF4f5E4F22323' // ETH
     ]
   }
   log.warning('no liquidity tracking token address for unsupported network {}', [network])
@@ -74,7 +79,7 @@ export function getUsdcNativeCurrencyWrapperPairAddress(): string {
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0x98f29f527c8e0ecc67a3c2d5567833bee01f2a12'
   if (network == 'xdai') return ADDRESS_ZERO
-  if (network == 'matic') return ADDRESS_ZERO
+  if (network == 'matic') return '0x86b7249272fabb82ef36550ef898ea539225e7f0'
   log.warning('no usdc native currency wrapper pair address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
@@ -84,7 +89,7 @@ export function getDaiNativeCurrencyWrapperPairAddress(): string {
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0x7515be43d16f871588adc135d58a9c30a71eb34f'
   if (network == 'xdai') return ADDRESS_ZERO
-  if (network == 'matic') return ADDRESS_ZERO
+  if (network == 'matic') return '0xcba9d57e29ab4eeb9aa69cd82f93b64505055a3b'
   log.warning('no dai native currency wrapper pair address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
@@ -94,7 +99,7 @@ export function getUsdtNativeCurrencyWrapperPair(): string {
   // not using a switch-case because using strings is not yet supported (only u32)
   if (network == 'mainnet') return '0x83dd8227c5ef121f2ae99c6f1df0aa9e914448ce'
   if (network == 'xdai') return ADDRESS_ZERO
-  if (network == 'matic') return ADDRESS_ZERO
+  if (network == 'matic') return '0x218e468b15469228f35b0e7f88425cd45fb982bd'
   log.warning('no usdt native currency wrapper pair address for unsupported network {}', [network])
   return ADDRESS_ZERO
 }
