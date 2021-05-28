@@ -62,12 +62,12 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
   }
   if (network == 'matic') {
     return [
-      '0x4c28f48448720e9000907bc2611f73022fdce1fa', // WMATIC
+      '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // WMATIC
       '0xb371248dd0f9e4061ccf8850e9223ca48aa7ca4b', // HNY
       '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
       '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC
-      '0xcB1e72786A6eb3b44C2a2429e317c8a2462CFeb1', // DAI
-      '0x714550C2C1Ea08688607D86ed8EeF4f5E4F22323' // ETH
+      '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DAI
+      '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619' // WETH
     ]
   }
   log.warning('no liquidity tracking token address for unsupported network {}', [network])
