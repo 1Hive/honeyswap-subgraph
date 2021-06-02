@@ -9,6 +9,7 @@ export function getMinimumUsdThresholdForNewPairs(): BigDecimal {
   if (network == 'mainnet') return BigDecimal.fromString('1000')
   if (network == 'rinkeby') return BigDecimal.fromString('0.1')
   if (network == 'xdai') return BigDecimal.fromString('10')
+  if (network == 'matic') return BigDecimal.fromString('10')
   log.warning('no minimum usd threshold for new pairs for unsupported network {}', [network])
   return ZERO_BD
 }
@@ -20,6 +21,7 @@ export function getMinimumLiquidityThresholdNativeCurrency(): BigDecimal {
   if (network == 'mainnet') return BigDecimal.fromString('0.5')
   if (network == 'rinkeby') return BigDecimal.fromString('0.01')
   if (network == 'xdai') return BigDecimal.fromString('10')
+  if (network == 'matic') return BigDecimal.fromString('10')
   log.warning('no minimum usd threshold for new pairs for unsupported network {}', [network])
   return ZERO_BD
 }

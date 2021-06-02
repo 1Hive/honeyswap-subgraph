@@ -56,8 +56,9 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
       '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d', // WXDAI
       '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', // HNY
       '0x3a97704a1b25f08aa230ae53b352e2e72ef52843', // AGVE
-      '0xb90d6bec20993be5d72a5ab353343f7a0281f158', // DXD
-      '0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1' // WETH
+      '0xddafbb505ad214d7b80b1f830fccc89b60fb7a83', // USDC on xDai
+      '0x4ecaba5870353805a9f068101a40e0f32ed605c6', // Tether on xDai
+      '0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1' // Wrapped Ether on xDai
     ]
   }
   if (network == 'matic') {
@@ -65,7 +66,7 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
       '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', // WMATIC
       '0xb371248dd0f9e4061ccf8850e9223ca48aa7ca4b', // HNY
       '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
-      '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC
+      '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
       '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DAI
       '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619' // WETH
     ]
