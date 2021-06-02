@@ -17,29 +17,29 @@ export function getNativeCurrencyPriceInUSD(): BigDecimal {
   }
 
   // fetch native currency prices for each stablecoin
-  let daiPair = Pair.load(getDaiNativeCurrencyWrapperPairAddress()) // dai is token0
-  let usdcPair = Pair.load(getUsdcNativeCurrencyWrapperPairAddress()) // usdc is token0
+  let daiPair = Pair.load(getDaiNativeCurrencyWrapperPairAddress()) // dai is token1
+  let usdcPair = Pair.load(getUsdcNativeCurrencyWrapperPairAddress()) // usdc is token1
   let usdtPair = Pair.load(getUsdtNativeCurrencyWrapperPair()) // usdt is token1
 
   // all 3 have been created
   if (daiPair !== null && usdcPair !== null && usdtPair !== null) {
-    let totalLiquidityNativeCurrency = daiPair.reserve1.plus(usdcPair.reserve1).plus(usdtPair.reserve0)
-    let daiWeight = daiPair.reserve1.div(totalLiquidityNativeCurrency)
-    let usdcWeight = usdcPair.reserve1.div(totalLiquidityNativeCurrency)
+    let totalLiquidityNativeCurrency = daiPair.reserve0.plus(usdcPair.reserve0).plus(usdtPair.reserve0)
+    let daiWeight = daiPair.reserve0.div(totalLiquidityNativeCurrency)
+    let usdcWeight = usdcPair.reserve0.div(totalLiquidityNativeCurrency)
     let usdtWeight = usdtPair.reserve0.div(totalLiquidityNativeCurrency)
-    return daiPair.token0Price
+    return daiPair.token1Price
       .times(daiWeight)
-      .plus(usdcPair.token0Price.times(usdcWeight))
+      .plus(usdcPair.token1Price.times(usdcWeight))
       .plus(usdtPair.token1Price.times(usdtWeight))
     // dai and USDC have been created
   } else if (daiPair !== null && usdcPair !== null) {
-    let totalLiquidityNativeCurrency = daiPair.reserve1.plus(usdcPair.reserve1)
-    let daiWeight = daiPair.reserve1.div(totalLiquidityNativeCurrency)
-    let usdcWeight = usdcPair.reserve1.div(totalLiquidityNativeCurrency)
-    return daiPair.token0Price.times(daiWeight).plus(usdcPair.token0Price.times(usdcWeight))
+    let totalLiquidityNativeCurrency = daiPair.reserve0.plus(usdcPair.reserve0)
+    let daiWeight = daiPair.reserve0.div(totalLiquidityNativeCurrency)
+    let usdcWeight = usdcPair.reserve0.div(totalLiquidityNativeCurrency)
+    return daiPair.token1Price.times(daiWeight).plus(usdcPair.token1Price.times(usdcWeight))
     // USDC is the only pair so far
   } else if (usdcPair !== null) {
-    return usdcPair.token0Price
+    return usdcPair.token1Price
   } else {
     return ZERO_BD
   }
