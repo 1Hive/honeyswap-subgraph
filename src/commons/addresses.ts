@@ -58,7 +58,8 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
       '0x3a97704a1b25f08aa230ae53b352e2e72ef52843', // AGVE
       '0xddafbb505ad214d7b80b1f830fccc89b60fb7a83', // USDC on xDai
       '0x4ecaba5870353805a9f068101a40e0f32ed605c6', // Tether on xDai
-      '0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1' // Wrapped Ether on xDai
+      '0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1', // Wrapped Ether on xDai
+      '0x38fb649ad3d6ba1113be5f57b927053e97fc5bf7' // xCOMB
     ]
   }
   if (network == 'matic') {
@@ -68,7 +69,10 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
       '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
       '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
       '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DAI
-      '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619' // WETH
+      '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', // WETH
+      '0x37d1ebc3af809b8fadb45dce7077efc629b2b5bb', // pCOMB
+      '0x1e42edbe5376e717c1b22904c59e406426e8173f', // SURF
+      '0x4de7fea447b837d7e77848a4b6c0662a64a84e14' // WAVE
     ]
   }
   log.warning('no liquidity tracking token address for unsupported network {}', [network])
