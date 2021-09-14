@@ -54,7 +54,7 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
   if (network == 'xdai') {
     return [
       '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d', // WXDAI
-      '0x71850b7E9Ee3f13Ab46d67167341E4bDc905Eef9', // HNY
+      '0x71850b7e9ee3f13ab46d67167341e4bdc905eef9', // HNY
       '0x3a97704a1b25f08aa230ae53b352e2e72ef52843', // AGVE
       '0xddafbb505ad214d7b80b1f830fccc89b60fb7a83', // USDC on xDai
       '0x4ecaba5870353805a9f068101a40e0f32ed605c6', // Tether on xDai
