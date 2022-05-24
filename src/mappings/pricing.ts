@@ -1,5 +1,6 @@
 /* eslint-disable prefer-const */
 import { Pair, Token, Bundle } from '../types/schema'
+import { log } from '@graphprotocol/graph-ts'
 import { BigDecimal, Address, BigInt, dataSource } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 import {
@@ -88,47 +89,60 @@ export function getTrackedVolumeUSD(
   let bundle = Bundle.load('1')
   let price0 = token0.derivedNativeCurrency.times(bundle.nativeCurrencyPrice)
   let price1 = token1.derivedNativeCurrency.times(bundle.nativeCurrencyPrice)
-
+  log.info("pair.id {}",[pair.id])
   let whitelist = getLiquidityTrackingTokenAddresses()
   // if less than 5 LPs, require high minimum reserve amount amount or return 0
   if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
     let reserve0USD = pair.reserve0.times(price0)
     let reserve1USD = pair.reserve1.times(price1)
+    log.info("lt provider count 5 {}",[pair.id])
+    log.info("price0 {}",[price0.toString()])
+    log.info("price1 {}",[price1.toString()])
     if (whitelist.includes(token0.id) && whitelist.includes(token1.id)) {
+      log.info("both in whitelist {}",[pair.id.toString()])
       if (reserve0USD.plus(reserve1USD).lt(getMinimumUsdThresholdForNewPairs())) {
+        log.info("zeroing less threshold {}",[pair.id.toString()])
         return ZERO_BD
       }
     }
     if (whitelist.includes(token0.id) && !whitelist.includes(token1.id)) {
+      log.info("token0 in and token1 out of whitelist {}",[pair.id.toString()])
       if (reserve0USD.times(BigDecimal.fromString('2')).lt(getMinimumUsdThresholdForNewPairs())) {
+        log.info("reserver0USD times 2 less threshold {}",[pair.id.toString()])
         return ZERO_BD
       }
     }
     if (!whitelist.includes(token0.id) && whitelist.includes(token1.id)) {
+      log.info("token0 in and token1 out of whitelist {}",[pair.id.toString()])
       if (reserve1USD.times(BigDecimal.fromString('2')).lt(getMinimumUsdThresholdForNewPairs())) {
+        log.info("reserver1USD times 2 less threshold {}",[pair.id.toString()])
         return ZERO_BD
       }
     }
   }
-
+  
   // both are whitelist tokens, take average of both amounts
   if (whitelist.includes(token0.id) && whitelist.includes(token1.id)) {
+    log.info("both in {} {} {} {}",[tokenAmount0.toString(),price0.toString(),tokenAmount1.toString(),price1.toString()])
     return tokenAmount0
-      .times(price0)
-      .plus(tokenAmount1.times(price1))
-      .div(BigDecimal.fromString('2'))
-  }
-
-  // take full value of the whitelisted token amount
-  if (whitelist.includes(token0.id) && !whitelist.includes(token1.id)) {
-    return tokenAmount0.times(price0)
-  }
-
-  // take full value of the whitelisted token amount
-  if (!whitelist.includes(token0.id) && whitelist.includes(token1.id)) {
-    return tokenAmount1.times(price1)
-  }
-
+    .times(price0)
+    .plus(tokenAmount1.times(price1))
+    .div(BigDecimal.fromString('2'))
+    }
+    
+    // take full value of the whitelisted token amount
+    if (whitelist.includes(token0.id) && !whitelist.includes(token1.id)) {
+      log.info("token0 in and token1 out {} {}",[tokenAmount0.toString(),price0.toString()])
+      return tokenAmount0.times(price0)
+    }
+    
+    // take full value of the whitelisted token amount
+    if (!whitelist.includes(token0.id) && whitelist.includes(token1.id)) {
+      log.info("token0 out and token1 in whitelist {} {}",[tokenAmount0.toString(),price0.toString()])
+      return tokenAmount1.times(price1)
+    }
+    
+    log.info("Not IFs so ZERO {}",[pair.id.toString()])
   // neither token is on white list, tracked volume is 0
   return ZERO_BD
 }
