@@ -61,7 +61,7 @@ export function getLiquidityTrackingTokenAddresses(): string[] {
       '0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1', // Wrapped Ether on xDai
       '0x4291f029b9e7acb02d49428458cf6fceac545f81', // WATER
       '0x5df8339c5e282ee48c0c7ce8a7d01a73d38b3b27', // TEC
-      '0x9021ad03c3a0c5368201fd820a6f85984bf51348', // WORK
+      '0xa187153c9e2bbadee5782d6b604cb1007bc6a86a', // WORK
       '0x4f4f9b8d5b4d0dc10506e5551b0513b61fd59e75', // GIV
       '0x21a42669643f45bc0e086b8fc2ed70c23d67509d', // FOX
       '0x83ff60e2f93f8edd0637ef669c69d5fb4f64ca8e', // BRIGHT
