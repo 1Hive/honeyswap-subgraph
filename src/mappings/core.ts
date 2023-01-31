@@ -361,7 +361,7 @@ export function handleMint(event: Mint): void {
   mint.save()
 
   // update the LP position
-  let liquidityPosition = createLiquidityPosition(event.address, mint.to as Address)
+  let liquidityPosition = createLiquidityPosition(event.address, Address.fromBytes(mint.to))
   createLiquiditySnapshot(liquidityPosition, event)
 
   // update day entities
@@ -436,7 +436,10 @@ export function handleBurn(event: Burn): void {
   burn.save()
 
   // update the LP position
-  let liquidityPosition = createLiquidityPosition(event.address, burn.sender as Address)
+  let liquidityPosition = createLiquidityPosition(
+    event.address,
+    burn.sender ? Address.fromBytes(burn.sender!) : Address.zero()
+  )
   createLiquiditySnapshot(liquidityPosition, event)
 
   // update day entities

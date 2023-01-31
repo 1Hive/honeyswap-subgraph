@@ -13,7 +13,7 @@ import {
 import { getMinimumLiquidityThresholdNativeCurrency, getMinimumUsdThresholdForNewPairs } from '../commons/pricing'
 
 export function getNativeCurrencyPriceInUSD(): BigDecimal {
-  if (dataSource.network() == 'xdai') {
+  if (dataSource.network() == 'gnosis') {
     return ONE_BD
   }
 
