@@ -15,8 +15,8 @@
     "deploy:xdai": "graph deploy 1hive/honeyswap-xdai subgraph.xdai.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.20.1",
-    "@graphprotocol/graph-ts": "^0.20.1",
+    "@graphprotocol/graph-cli": "0.37.2",
+    "@graphprotocol/graph-ts": "^0.29.1",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
     "eslint": "^6.2.2",

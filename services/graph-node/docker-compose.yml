@@ -23,7 +23,7 @@ services:
       # ethereum: "rinkeby:https://rinkeby.infura.io/v3/74dcdd771e514bdf88cf139f93b3eae2"
       # ethereum: "xdai:https://gnosis-mainnet.public.blastapi.io"
       ethereum: "xdai:https://xdai-archive.blockscout.com"
-      GRAPH_LOG: info
+      GRAPH_LOG: debug
       GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: "true"
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: "true"
   ipfs:

@@ -1,6 +1,14 @@
 {
   "extends": "./node_modules/@graphprotocol/graph-ts/tsconfig.json",
   "compilerOptions": {
-    "types": ["@graphprotocol/graph-ts"]
+    "types": [
+      "@graphprotocol/graph-ts"
+    ]
+  },
+  "rules": {
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/class-name-casing": {
+      "allowUnderscorePrefix": true
+    }
   }
 }
