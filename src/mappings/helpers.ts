@@ -175,12 +175,16 @@ export function createLiquiditySnapshot(position: LiquidityPosition, event: ethe
   let bundle = Bundle.load('1')
   let pair = Pair.load(position.pair)
   if (!pair) {
+    // log
+    log.warning('Pair does not exist for liquidity position: {}', [position.id])
     return
   }
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
 
   if (!token0 || !token1 || !token0.derivedNativeCurrency || !token1.derivedNativeCurrency || !bundle) {
+    //log
+    log.warning('Missing token or bundle for pair: {}', [pair.id])
     return
   }
   // create new snapshot
@@ -190,8 +194,8 @@ export function createLiquiditySnapshot(position: LiquidityPosition, event: ethe
   snapshot.block = event.block.number.toI32()
   snapshot.user = position.user
   snapshot.pair = position.pair
-  snapshot.token0PriceUSD = token0.derivedNativeCurrency!.times(bundle.nativeCurrencyPrice)
-  snapshot.token1PriceUSD = token1.derivedNativeCurrency!.times(bundle.nativeCurrencyPrice)
+  snapshot.token0PriceUSD = token0.derivedNativeCurrency.times(bundle.nativeCurrencyPrice)
+  snapshot.token1PriceUSD = token1.derivedNativeCurrency.times(bundle.nativeCurrencyPrice)
   snapshot.reserve0 = pair.reserve0
   snapshot.reserve1 = pair.reserve1
   snapshot.reserveUSD = pair.reserveUSD
