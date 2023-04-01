@@ -350,9 +350,9 @@ export function handleMint(event: Mint): void {
   let amountTotalUSD = BigDecimal.zero()
 
   if (bundle && token1.derivedNativeCurrency && token0.derivedNativeCurrency) {
-    amountTotalUSD = token1.derivedNativeCurrency
-      .times(token1Amount)
-      .plus(token0.derivedNativeCurrency.times(token0Amount))
+    amountTotalUSD = token1
+      .derivedNativeCurrency!.times(token1Amount)
+      .plus(token0.derivedNativeCurrency!.times(token0Amount))
       .times(bundle.nativeCurrencyPrice)
   }
 
@@ -428,9 +428,10 @@ export function handleBurn(event: Burn): void {
   let amountTotalUSD = BigDecimal.zero()
 
   if (bundle && token1.derivedNativeCurrency && token0.derivedNativeCurrency) {
-    amountTotalUSD = token1.derivedNativeCurrency
-      .times(token1Amount)
-      .plus(token0.derivedNativeCurrency.times(token0Amount))
+    // non-null assertion here its necessary, if/ternary checks above are not sufficient for the compiler
+    amountTotalUSD = token1
+      .derivedNativeCurrency!.times(token1Amount)
+      .plus(token0.derivedNativeCurrency!.times(token0Amount))
       .times(bundle.nativeCurrencyPrice)
   }
   // update txn counts
@@ -453,9 +454,10 @@ export function handleBurn(event: Burn): void {
   burn.save()
 
   // update the LP position
+  // non-null assertion here its necessary, if/ternary checks above are not sufficient for the compiler
   let liquidityPosition = createLiquidityPosition(
     event.address,
-    burn.sender ? Address.fromBytes(burn.sender) : Address.zero()
+    burn.sender ? Address.fromBytes(burn.sender!) : Address.zero()
   )
   createLiquiditySnapshot(liquidityPosition, event)
 
@@ -503,9 +505,9 @@ export function handleSwap(event: Swap): void {
 
   if (token1.derivedNativeCurrency && token0.derivedNativeCurrency) {
     // get total amounts of derived USD and native currency for tracking
-    derivedAmountNativeCurrency = token1.derivedNativeCurrency
-      .times(amount1Total)
-      .plus(token0.derivedNativeCurrency.times(amount0Total))
+    derivedAmountNativeCurrency = token1
+      .derivedNativeCurrency!.times(amount1Total)
+      .plus(token0.derivedNativeCurrency!.times(amount0Total))
       .div(BigDecimal.fromString('2'))
     derivedAmountUSD = derivedAmountNativeCurrency.times(bundle.nativeCurrencyPrice)
   }
