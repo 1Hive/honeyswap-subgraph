@@ -1,83 +1,89 @@
 type HoneyswapFactory @entity {
-  # factory address
+  # Factory address
   id: ID!
-
-  # pair info
+  # Number of pairs created by the factory
   pairCount: Int!
-
-  # total volume
+  # Total trading volume in USD
   totalVolumeUSD: BigDecimal!
+  # Total trading volume in the native currency
   totalVolumeNativeCurrency: BigDecimal!
-
-  # untracked values - less confident USD scores
+  # Trading volume in USD that could not be tracked
   untrackedVolumeUSD: BigDecimal!
-
-  # total liquidity
+  # Total liquidity in USD
   totalLiquidityUSD: BigDecimal!
+  # Total liquidity in the native currency
   totalLiquidityNativeCurrency: BigDecimal!
-
-  # transactions
+  # Total number of transactions
   txCount: BigInt!
 }
 
 type Token @entity {
-  # token address
+  # Token address
   id: ID!
-
-  # mirrored from the smart contract
+  # Token symbol
   symbol: String!
+  # Token name
   name: String!
+  # Number of decimal places for the token
   decimals: BigInt!
-
-  # used for other stats like marketcap
+  # Total token supply
   totalSupply: BigInt!
-
-  # token specific volume
+  # Total trading volume
   tradeVolume: BigDecimal!
+  # Total trading volume in USD
   tradeVolumeUSD: BigDecimal!
+  # Untracked trading volume in USD
   untrackedVolumeUSD: BigDecimal!
-
-  # transactions across all pairs
+  # Total number of transactions
   txCount: BigInt!
-
-  # liquidity across all pairs
+  # Total liquidity across all pairs
   totalLiquidity: BigDecimal!
-
-  # derived prices
+  # Derived price of the token in the native currency
   derivedNativeCurrency: BigDecimal
-
-  # derived fields
+  # Array of daily data for the token
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
+  # Array of daily data for pairs where this token is the base
   pairDayDataBase: [PairDayData!]! @derivedFrom(field: "token0")
+  # Array of daily data for pairs where this token is the quote
   pairDayDataQuote: [PairDayData!]! @derivedFrom(field: "token1")
+  # Array of pairs where this token is the base
   pairBase: [Pair!]! @derivedFrom(field: "token0")
+  # Array of pairs where this token is the quote
   pairQuote: [Pair!]! @derivedFrom(field: "token1")
 }
 
 type Pair @entity {
-  # pair address
+  # Pair address
   id: ID!
-
-  # mirrored from the smart contract
+  # Token 0 of the pair
   token0: Token!
+  # Token 1 of the pair
   token1: Token!
+  # Reserve of token 0
   reserve0: BigDecimal!
+  # Reserve of token 1
   reserve1: BigDecimal!
+  # Total supply of the liquidity token
   totalSupply: BigDecimal!
-
-  # derived liquidity
+  # Derived liquidity in the native currency
   reserveNativeCurrency: BigDecimal!
+  # Derived liquidity in USD
   reserveUSD: BigDecimal!
-  trackedReserveNativeCurrency: BigDecimal! # used for separating per pair reserves and global
-  # Price in terms of the asset pair
+  # Tracked liquidity in the native currency
+  trackedReserveNativeCurrency: BigDecimal!
+  # Price of token 0 in terms of token 1
   token0Price: BigDecimal!
+  # Price of token 1 in terms of token 0
   token1Price: BigDecimal!
-
-  # lifetime volume stats
+  # Trading volume of token 0
   volumeToken0: BigDecimal!
+  # Trading volume of token 1
   volumeToken1: BigDecimal!
+  # Total trading volume in USD
   volumeUSD: BigDecimal!
+  # Untracked trading volume in USD
   untrackedVolumeUSD: BigDecimal!
+  # Total number of transactions
   txCount: BigInt!
 
   # creation stats
@@ -88,46 +94,74 @@ type Pair @entity {
   liquidityProviderCount: BigInt! # used to detect new exchanges
   # derived fields
   pairHourData: [PairHourData!]! @derivedFrom(field: "pair")
+  # Pair liquididty posistions
   liquidityPositions: [LiquidityPosition!]! @derivedFrom(field: "pair")
+  # Snapshot of liquididty position
   liquidityPositionSnapshots: [LiquidityPositionSnapshot!]! @derivedFrom(field: "pair")
+  #Token pairs minted
   mints: [Mint!]! @derivedFrom(field: "pair")
+  # Token pairs burned
   burns: [Burn!]! @derivedFrom(field: "pair")
+  # Token pair swaps
   swaps: [Swap!]! @derivedFrom(field: "pair")
 }
 
 type User @entity {
+  # User ID
   id: ID!
+  # Users liquididty position
   liquidityPositions: [LiquidityPosition!] @derivedFrom(field: "user")
+  # USD value of swapped
   usdSwapped: BigDecimal!
 }
 
 type LiquidityPosition @entity {
+  # Liquidity position id
   id: ID!
+  # User liquidity position
   user: User!
+  # Pair liquidity position
   pair: Pair!
+  # Token balance of LP
   liquidityTokenBalance: BigDecimal!
 }
 
 # saved over time for return calculations, gets created and never updated
 type LiquidityPositionSnapshot @entity {
+  # liquidity position snapshot id
   id: ID!
+  # Snapshot of LP position
   liquidityPosition: LiquidityPosition!
-  timestamp: Int! # saved for fast historical lookups
-  block: Int! # saved for fast historical lookups
-  user: User! # reference to user
+  # saved for fast historical lookups
+  timestamp: Int! 
+  # saved for fast historical lookups
+  block: Int! 
+  # reference to user
+  user: User! 
+  # reference to pair
   pair: Pair! # reference to pair
-  token0PriceUSD: BigDecimal! # snapshot of token0 price
-  token1PriceUSD: BigDecimal! # snapshot of token1 price
-  reserve0: BigDecimal! # snapshot of pair token0 reserves
-  reserve1: BigDecimal! # snapshot of pair token1 reserves
-  reserveUSD: BigDecimal! # snapshot of pair reserves in USD
-  liquidityTokenTotalSupply: BigDecimal! # snapshot of pool token supply
-  liquidityTokenBalance: BigDecimal! # snapshot of users pool token balance
+  # snapshot of token0 price
+  token0PriceUSD: BigDecimal! 
+  # snapshot of token1 price
+  token1PriceUSD: BigDecimal! 
+  # snapshot of pair token0 reserves
+  reserve0: BigDecimal! 
+  # snapshot of pair token1 reserves
+  reserve1: BigDecimal! 
+  # snapshot of pair reserves in USD
+  reserveUSD: BigDecimal! 
+  # snapshot of pool token supply
+  liquidityTokenTotalSupply: BigDecimal! 
+  # snapshot of users pool token balance
+  liquidityTokenBalance: BigDecimal! 
 }
 
 type Transaction @entity {
-  id: ID! # txn hash
+  # txn hash
+  id: ID!
+  # Blocknumber of transaction
   blockNumber: BigInt!
+  # Timestamp of transaction
   timestamp: BigInt!
   # This is not the reverse of Mint.transaction; it is only used to
   # track incomplete mints (similar for burns and swaps)
@@ -139,32 +173,43 @@ type Transaction @entity {
 type Mint @entity {
   # transaction hash + "-" + index in mints Transaction array
   id: ID!
+  # Transaction has of mint
   transaction: Transaction!
-  timestamp: BigInt! # need this to pull recent txns for specific token or pair
+  # # need this to pull recent txns for specific token or pair
+  timestamp: BigInt! 
+  # Address of pair
   pair: Pair!
 
   # populated from the primary Transfer event
   to: Bytes!
+  # Populated from the primary Transfer event
   liquidity: BigDecimal!
 
   # populated from the Mint event
   sender: Bytes
+  # populated from the Mint event
   amount0: BigDecimal
+  # populated from the Mint event
   amount1: BigDecimal
+  # populated from the Mint event
   logIndex: BigInt
   # derived amount based on available prices of tokens
   amountUSD: BigDecimal
 
   # optional fee fields, if a Transfer event is fired in _mintFee
   feeTo: Bytes
+  # Optional fee fields, if a Transfer event is fired in _mintFee
   feeLiquidity: BigDecimal
 }
 
 type Burn @entity {
   # transaction hash + "-" + index in mints Transaction array
   id: ID!
+  # Transaction hash of burn
   transaction: Transaction!
-  timestamp: BigInt! # need this to pull recent txns for specific token or pair
+  # need this to pull recent txns for specific token or pair
+  timestamp: BigInt! 
+  # Address of pair
   pair: Pair!
 
   # populated from the primary Transfer event
@@ -172,9 +217,13 @@ type Burn @entity {
 
   # populated from the Burn event
   sender: Bytes
+  # populated from the Burn event
   amount0: BigDecimal
+  # populated from the Burn event
   amount1: BigDecimal
+  # populated from the Burn event
   to: Bytes
+  # populated from the Burn event
   logIndex: BigInt
   # derived amount based on available prices of tokens
   amountUSD: BigDecimal
@@ -184,24 +233,35 @@ type Burn @entity {
 
   # optional fee fields, if a Transfer event is fired in _mintFee
   feeTo: Bytes
+  # optional fee fields, if a Transfer event is fired in _mintFee
   feeLiquidity: BigDecimal
 }
 
 type Swap @entity {
   # transaction hash + "-" + index in swaps Transaction array
   id: ID!
+  # Pointer to transaction
   transaction: Transaction!
-  timestamp: BigInt! # need this to pull recent txns for specific token or pair
+  # need this to pull recent txns for specific token or pair
+  timestamp: BigInt!
+  # Address of pair
   pair: Pair!
 
   # populated from the Swap event
   sender: Bytes!
-  from: Bytes! # the EOA that initiated the txn
+  # the EOA that initiated the txn
+  from: Bytes! 
+  # Amount of token0 swapped in
   amount0In: BigDecimal!
+  # Amount of token1 swapped in
   amount1In: BigDecimal!
+  # Amount of token0 swapped out
   amount0Out: BigDecimal!
+  # Amount of token1 swapped out
   amount1Out: BigDecimal!
+  # Address swapped to
   to: Bytes!
+  # Order within the txn
   logIndex: BigInt
 
   # derived info
@@ -210,56 +270,80 @@ type Swap @entity {
 
 # stores for USD calculations
 type Bundle @entity {
+  # Bundle address
   id: ID!
-  nativeCurrencyPrice: BigDecimal! # price of native currency usd
+  # price of native currency usd
+  nativeCurrencyPrice: BigDecimal! 
 }
 
 # Data accumulated and condensed into day stats for all of Honeyswap
 type HoneyswapDayData @entity {
-  id: ID! # timestamp rounded to current day by dividing by 86400
+  # timestamp rounded to current day by dividing by 86400
+  id: ID! 
+  # Date of information
   date: Int!
 
+  # Daily volume in native currency
   dailyVolumeNativeCurrency: BigDecimal!
+  # Daily volume in USD
   dailyVolumeUSD: BigDecimal!
+  # Daily volume
   dailyVolumeUntracked: BigDecimal!
 
+  # Total volume in native currency
   totalVolumeNativeCurrency: BigDecimal!
+  # Total liquidity in native token
   totalLiquidityNativeCurrency: BigDecimal!
-  totalVolumeUSD: BigDecimal! # Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
+  # Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
+  totalVolumeUSD: BigDecimal! 
+  # Total liquidity in USD
   totalLiquidityUSD: BigDecimal!
-
+  # Transactions across all pairs
   txCount: BigInt!
 }
 
 type PairHourData @entity {
+  # Pair hour data id
   id: ID!
-  hourStartUnix: Int! # unix timestamp for start of hour
+  # unix timestamp for start of hour
+  hourStartUnix: Int! 
+  # Address of pair
   pair: Pair!
 
   # reserves
   reserve0: BigDecimal!
+  # reserves
   reserve1: BigDecimal!
 
   # derived liquidity
   reserveUSD: BigDecimal!
 
-  # volume stats
+  # Hourly volume token0
   hourlyVolumeToken0: BigDecimal!
+  # Hourly volume token1
   hourlyVolumeToken1: BigDecimal!
+  # Hourly volume in usd
   hourlyVolumeUSD: BigDecimal!
+  # Number of hourly trasactions
   hourlyTxns: BigInt!
 }
 
 # Data accumulated and condensed into day stats for each exchange
 type PairDayData @entity {
+  # Pair day data id
   id: ID!
+  # Date of information
   date: Int!
+  # Address of pair
   pairAddress: Bytes!
+  # Token0 address
   token0: Token!
+  # Token1 address
   token1: Token!
 
-  # reserves
+  # Reserves
   reserve0: BigDecimal!
+  # Reserves
   reserve1: BigDecimal!
 
   # total supply for LP historical returns
@@ -268,29 +352,41 @@ type PairDayData @entity {
   # derived liquidity
   reserveUSD: BigDecimal!
 
-  # volume stats
+  # Daily volume token0
   dailyVolumeToken0: BigDecimal!
+  # Daily volume token1
   dailyVolumeToken1: BigDecimal!
+  # Daily volume in usd
   dailyVolumeUSD: BigDecimal!
+  # Number of daily transactions
   dailyTxns: BigInt!
 }
 
 type TokenDayData @entity {
+  # Token day data id
   id: ID!
+  # Date of information
   date: Int!
+  # Token symbol
   token: Token!
 
-  # volume stats
+ 
+  # Token daily volume
   dailyVolumeToken: BigDecimal!
+  # Daily volume native currency
   dailyVolumeNativeCurrency: BigDecimal!
+  # Daily volume in usd
   dailyVolumeUSD: BigDecimal!
+  # Number of daily transactions
   dailyTxns: BigInt!
 
-  # liquidity stats
+  # Total amount for liquidity token
   totalLiquidityToken: BigDecimal!
+  # Total liquidity native currency
   totalLiquidityNativeCurrency: BigDecimal!
+  # Total liquidity usd
   totalLiquidityUSD: BigDecimal!
 
-  # price stats
+  # Price usd
   priceUSD: BigDecimal!
 }
