@@ -21,11 +21,12 @@ export function updateHoneyswapDayData(event: ethereum.Event): HoneyswapDayData 
     honeyswapDayData.dailyVolumeUntracked = ZERO_BD
   }
 
-  honeyswapDayData.totalLiquidityUSD = honeyswap.totalLiquidityUSD
-  honeyswapDayData.totalLiquidityNativeCurrency = honeyswap.totalLiquidityNativeCurrency
-  honeyswapDayData.txCount = honeyswap.txCount
+  if (honeyswap) {
+    honeyswapDayData.totalLiquidityUSD = honeyswap.totalLiquidityUSD
+    honeyswapDayData.totalLiquidityNativeCurrency = honeyswap.totalLiquidityNativeCurrency
+    honeyswapDayData.txCount = honeyswap.txCount
+  }
   honeyswapDayData.save()
-
   return honeyswapDayData as HoneyswapDayData
 }
 
@@ -42,8 +43,10 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
   if (pairDayData === null) {
     pairDayData = new PairDayData(dayPairID)
     pairDayData.date = dayStartTimestamp
-    pairDayData.token0 = pair.token0
-    pairDayData.token1 = pair.token1
+    if (pair) {
+      pairDayData.token0 = pair.token0
+      pairDayData.token1 = pair.token1
+    }
     pairDayData.pairAddress = event.address
     pairDayData.dailyVolumeToken0 = ZERO_BD
     pairDayData.dailyVolumeToken1 = ZERO_BD
@@ -51,10 +54,12 @@ export function updatePairDayData(event: ethereum.Event): PairDayData {
     pairDayData.dailyTxns = ZERO_BI
   }
 
-  pairDayData.totalSupply = pair.totalSupply
-  pairDayData.reserve0 = pair.reserve0
-  pairDayData.reserve1 = pair.reserve1
-  pairDayData.reserveUSD = pair.reserveUSD
+  if (pair) {
+    pairDayData.totalSupply = pair.totalSupply
+    pairDayData.reserve0 = pair.reserve0
+    pairDayData.reserve1 = pair.reserve1
+    pairDayData.reserveUSD = pair.reserveUSD
+  }
   pairDayData.dailyTxns = pairDayData.dailyTxns.plus(ONE_BI)
   pairDayData.save()
 
@@ -81,9 +86,11 @@ export function updatePairHourData(event: ethereum.Event): PairHourData {
     pairHourData.hourlyTxns = ZERO_BI
   }
 
-  pairHourData.reserve0 = pair.reserve0
-  pairHourData.reserve1 = pair.reserve1
-  pairHourData.reserveUSD = pair.reserveUSD
+  if (pair) {
+    pairHourData.reserve0 = pair.reserve0
+    pairHourData.reserve1 = pair.reserve1
+    pairHourData.reserveUSD = pair.reserveUSD
+  }
   pairHourData.hourlyTxns = pairHourData.hourlyTxns.plus(ONE_BI)
   pairHourData.save()
 
@@ -101,21 +108,30 @@ export function updateTokenDayData(token: Token, event: ethereum.Event): TokenDa
     .concat(BigInt.fromI32(dayID).toString())
 
   let tokenDayData = TokenDayData.load(tokenDayID)
+
+  let priceUSD = BigDecimal.zero()
+  let nativeCurrencyPrice = BigDecimal.zero()
+  if (bundle) {
+    nativeCurrencyPrice = bundle.nativeCurrencyPrice
+  }
+  if (token.derivedNativeCurrency) {
+    priceUSD = token.derivedNativeCurrency!.times(nativeCurrencyPrice)
+  }
   if (tokenDayData === null) {
     tokenDayData = new TokenDayData(tokenDayID)
     tokenDayData.date = dayStartTimestamp
     tokenDayData.token = token.id
-    tokenDayData.priceUSD = token.derivedNativeCurrency.times(bundle.nativeCurrencyPrice)
+    tokenDayData.priceUSD = priceUSD
     tokenDayData.dailyVolumeToken = ZERO_BD
     tokenDayData.dailyVolumeNativeCurrency = ZERO_BD
     tokenDayData.dailyVolumeUSD = ZERO_BD
     tokenDayData.dailyTxns = ZERO_BI
     tokenDayData.totalLiquidityUSD = ZERO_BD
   }
-  tokenDayData.priceUSD = token.derivedNativeCurrency.times(bundle.nativeCurrencyPrice)
+  tokenDayData.priceUSD = priceUSD
   tokenDayData.totalLiquidityToken = token.totalLiquidity
   tokenDayData.totalLiquidityNativeCurrency = token.totalLiquidity.times(token.derivedNativeCurrency as BigDecimal)
-  tokenDayData.totalLiquidityUSD = tokenDayData.totalLiquidityNativeCurrency.times(bundle.nativeCurrencyPrice)
+  tokenDayData.totalLiquidityUSD = tokenDayData.totalLiquidityNativeCurrency.times(nativeCurrencyPrice)
   tokenDayData.dailyTxns = tokenDayData.dailyTxns.plus(ONE_BI)
   tokenDayData.save()
 

@@ -12,11 +12,12 @@
     "deploy-local:polygon": "graph deploy 1hive/honeyswap subgraph.polygon.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy-local:xdai": "graph deploy 1hive/honeyswap subgraph.xdai.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy:polygon": "graph deploy 1hive/honeyswap-polygon subgraph.polygon.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
-    "deploy:xdai": "graph deploy 1hive/honeyswap-xdai subgraph.xdai.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug"
+    "deploy:xdai": "graph deploy 1hive/honeyswap-xdai subgraph.xdai.yaml --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
+    "deploy:gnosis": "npx graph deploy --studio honeyswap-gnosis subgraph.xdai.yaml"
   },
   "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.19.0",
-    "@graphprotocol/graph-ts": "^0.19.0",
+    "@graphprotocol/graph-cli": "0.37.2",
+    "@graphprotocol/graph-ts": "^0.29.3",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
     "eslint": "^6.2.2",
