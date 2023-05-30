@@ -48,7 +48,7 @@ export function handleNewPair(event: PairCreated): void {
     let decimals = fetchTokenDecimals(event.params.token0)
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
-      log.debug('mybug the decimal on token 0 was null', [])
+      log.warning('token0->decimals not found with address: {}', [event.params.token0.toHexString()])
       return
     }
 
@@ -72,6 +72,8 @@ export function handleNewPair(event: PairCreated): void {
 
     // bail if we couldn't figure out the decimals
     if (decimals === null) {
+      // log
+      log.warning('token1->decimals not found with address: {}', [event.params.token1.toHexString()])
       return
     }
     token1.decimals = decimals

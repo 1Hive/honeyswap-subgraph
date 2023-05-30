@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { BigInt, BigDecimal, store, Address } from '@graphprotocol/graph-ts'
+import { BigInt, BigDecimal, store, Address, log } from '@graphprotocol/graph-ts'
 import {
   Pair,
   Token,
@@ -31,16 +31,24 @@ import {
 import { getFactoryAddress } from '../commons/addresses'
 
 function isCompleteMint(mintId: string): boolean {
-  return MintEvent.load(mintId).sender !== null // sufficient checks
+  const mintEvent = MintEvent.load(mintId)
+  return mintEvent != null && mintEvent.sender !== null // sufficient checks
 }
 
 export function handleTransfer(event: Transfer): void {
   // ignore initial transfers for first adds
   if (event.params.to.toHexString() == ADDRESS_ZERO && event.params.value.equals(BigInt.fromI32(1000))) {
+    //log
+    log.warning('Initial transfer', [])
     return
   }
 
   let factory = HoneyswapFactory.load(getFactoryAddress())
+  if (!factory) {
+    //log
+    log.warning('Factory not found', [])
+    return
+  }
   let transactionHash = event.transaction.hash.toHexString()
 
   // user stats
@@ -51,6 +59,11 @@ export function handleTransfer(event: Transfer): void {
 
   // get pair and load contract
   let pair = Pair.load(event.address.toHexString())
+  if (!pair) {
+    // log
+    log.warning('Pair not found', [])
+    return
+  }
   let pairContract = PairContract.bind(event.address)
 
   // liquidity token amount being transfered
@@ -135,7 +148,7 @@ export function handleTransfer(event: Transfer): void {
     let burn: BurnEvent
     if (burns.length > 0) {
       let currentBurn = BurnEvent.load(burns[burns.length - 1])
-      if (currentBurn.needsComplete) {
+      if (currentBurn && currentBurn.needsComplete) {
         burn = currentBurn as BurnEvent
       } else {
         burn = new BurnEvent(
@@ -169,8 +182,10 @@ export function handleTransfer(event: Transfer): void {
     // if this logical burn included a fee mint, account for this
     if (mints.length !== 0 && !isCompleteMint(mints[mints.length - 1])) {
       let mint = MintEvent.load(mints[mints.length - 1])
-      burn.feeTo = mint.to
-      burn.feeLiquidity = mint.liquidity
+      if (mint) {
+        burn.feeTo = mint.to
+        burn.feeLiquidity = mint.liquidity
+      }
       // remove the logical mint
       store.remove('Mint', mints[mints.length - 1])
       // update the transaction
@@ -217,10 +232,19 @@ export function handleTransfer(event: Transfer): void {
 
 export function handleSync(event: Sync): void {
   let pair = Pair.load(event.address.toHex())
+  if (!pair) {
+    log.warning('Pair does not exist: {}', [event.address.toHex()])
+    return
+  }
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
   let honeyswap = HoneyswapFactory.load(getFactoryAddress())
 
+  if (!honeyswap || !token0 || !token1) {
+    // log
+    log.warning('Honeyswap or token does not exist: {}', [event.address.toHex()])
+    return
+  }
   // reset factory liquidity by subtracting onluy tarcked liquidity
   honeyswap.totalLiquidityNativeCurrency = honeyswap.totalLiquidityNativeCurrency.minus(
     pair.trackedReserveNativeCurrency as BigDecimal
@@ -242,6 +266,10 @@ export function handleSync(event: Sync): void {
 
   // update native currency price now that reserves could have changed
   let bundle = Bundle.load('1')
+  if (!bundle) {
+    log.warning('Bundle does not exist: {}', ['1'])
+    return
+  }
   bundle.nativeCurrencyPrice = getNativeCurrencyPriceInUSD()
   bundle.save()
 
@@ -287,15 +315,28 @@ export function handleSync(event: Sync): void {
 
 export function handleMint(event: Mint): void {
   let transaction = Transaction.load(event.transaction.hash.toHexString())
+  if (!transaction) {
+    log.warning('Transaction does not exist: {}', [event.transaction.hash.toHexString()])
+    return
+  }
   let mints = transaction.mints
   let mint = MintEvent.load(mints[mints.length - 1])
 
   let pair = Pair.load(event.address.toHex())
   let honeyswap = HoneyswapFactory.load(getFactoryAddress())
 
+  if (!pair || !honeyswap || !mint) {
+    log.warning('Pair or Honeyswap or Mint does not exist: {}', [event.address.toHex()])
+    return
+  }
+
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
 
+  if (!token0 || !token1) {
+    log.warning('Token does not exist: {}', [event.address.toHex()])
+    return
+  }
   // update exchange info (except balances, sync will cover that)
   let token0Amount = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let token1Amount = convertTokenToDecimal(event.params.amount1, token1.decimals)
@@ -306,10 +347,14 @@ export function handleMint(event: Mint): void {
 
   // get new amounts of USD and native currency for tracking
   let bundle = Bundle.load('1')
-  let amountTotalUSD = token1.derivedNativeCurrency
-    .times(token1Amount)
-    .plus(token0.derivedNativeCurrency.times(token0Amount))
-    .times(bundle.nativeCurrencyPrice)
+  let amountTotalUSD = BigDecimal.zero()
+
+  if (bundle && token1.derivedNativeCurrency && token0.derivedNativeCurrency) {
+    amountTotalUSD = token1
+      .derivedNativeCurrency!.times(token1Amount)
+      .plus(token0.derivedNativeCurrency!.times(token0Amount))
+      .times(bundle.nativeCurrencyPrice)
+  }
 
   // update txn counts
   pair.txCount = pair.txCount.plus(ONE_BI)
@@ -329,7 +374,7 @@ export function handleMint(event: Mint): void {
   mint.save()
 
   // update the LP position
-  let liquidityPosition = createLiquidityPosition(event.address, mint.to as Address)
+  let liquidityPosition = createLiquidityPosition(event.address, Address.fromBytes(mint.to))
   createLiquiditySnapshot(liquidityPosition, event)
 
   // update day entities
@@ -345,6 +390,8 @@ export function handleBurn(event: Burn): void {
 
   // safety check
   if (transaction === null) {
+    // log
+    log.warning('Transaction does not exist: {}', [event.transaction.hash.toHexString()])
     return
   }
 
@@ -354,9 +401,20 @@ export function handleBurn(event: Burn): void {
   let pair = Pair.load(event.address.toHex())
   let honeyswap = HoneyswapFactory.load(getFactoryAddress())
 
+  if (!pair || !honeyswap || !burn) {
+    log.warning('Pair or Honeyswap or Burn does not exist: {}', [event.address.toHex()])
+    return
+  }
+
   //update token info
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
+
+  if (!token0 || !token1) {
+    log.warning('Token does not exist: {}', [event.address.toHex()])
+    return
+  }
+
   let token0Amount = convertTokenToDecimal(event.params.amount0, token0.decimals)
   let token1Amount = convertTokenToDecimal(event.params.amount1, token1.decimals)
 
@@ -365,12 +423,17 @@ export function handleBurn(event: Burn): void {
   token1.txCount = token1.txCount.plus(ONE_BI)
 
   // get new amounts of USD and native currency for tracking
-  let bundle = Bundle.load('1')
-  let amountTotalUSD = token1.derivedNativeCurrency
-    .times(token1Amount)
-    .plus(token0.derivedNativeCurrency.times(token0Amount))
-    .times(bundle.nativeCurrencyPrice)
 
+  let bundle = Bundle.load('1')
+  let amountTotalUSD = BigDecimal.zero()
+
+  if (bundle && token1.derivedNativeCurrency && token0.derivedNativeCurrency) {
+    // non-null assertion here its necessary, if/ternary checks above are not sufficient for the compiler
+    amountTotalUSD = token1
+      .derivedNativeCurrency!.times(token1Amount)
+      .plus(token0.derivedNativeCurrency!.times(token0Amount))
+      .times(bundle.nativeCurrencyPrice)
+  }
   // update txn counts
   honeyswap.txCount = honeyswap.txCount.plus(ONE_BI)
   pair.txCount = pair.txCount.plus(ONE_BI)
@@ -391,7 +454,11 @@ export function handleBurn(event: Burn): void {
   burn.save()
 
   // update the LP position
-  let liquidityPosition = createLiquidityPosition(event.address, burn.sender as Address)
+  // non-null assertion here its necessary, if/ternary checks above are not sufficient for the compiler
+  let liquidityPosition = createLiquidityPosition(
+    event.address,
+    burn.sender ? Address.fromBytes(burn.sender!) : Address.zero()
+  )
   createLiquiditySnapshot(liquidityPosition, event)
 
   // update day entities
@@ -404,8 +471,19 @@ export function handleBurn(event: Burn): void {
 
 export function handleSwap(event: Swap): void {
   let pair = Pair.load(event.address.toHexString())
+  if (!pair) {
+    // log
+    log.warning('Pair does not exist: {}', [event.address.toHexString()])
+    return
+  }
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
+
+  if (!token1 || !token0) {
+    // log
+    log.warning('Token does not exist: {}', [event.address.toHexString()])
+    return
+  }
   let amount0In = convertTokenToDecimal(event.params.amount0In, token0.decimals)
   let amount1In = convertTokenToDecimal(event.params.amount1In, token1.decimals)
   let amount0Out = convertTokenToDecimal(event.params.amount0Out, token0.decimals)
@@ -418,12 +496,21 @@ export function handleSwap(event: Swap): void {
   // native currency/USD prices
   let bundle = Bundle.load('1')
 
-  // get total amounts of derived USD and native currency for tracking
-  let derivedAmountNativeCurrency = token1.derivedNativeCurrency
-    .times(amount1Total)
-    .plus(token0.derivedNativeCurrency.times(amount0Total))
-    .div(BigDecimal.fromString('2'))
-  let derivedAmountUSD = derivedAmountNativeCurrency.times(bundle.nativeCurrencyPrice)
+  if (!bundle) {
+    log.warning('Bundle does not exist: {}', ['1'])
+    return
+  }
+  let derivedAmountNativeCurrency: BigDecimal = BigDecimal.zero()
+  let derivedAmountUSD: BigDecimal = BigDecimal.zero()
+
+  if (token1.derivedNativeCurrency && token0.derivedNativeCurrency) {
+    // get total amounts of derived USD and native currency for tracking
+    derivedAmountNativeCurrency = token1
+      .derivedNativeCurrency!.times(amount1Total)
+      .plus(token0.derivedNativeCurrency!.times(amount0Total))
+      .div(BigDecimal.fromString('2'))
+    derivedAmountUSD = derivedAmountNativeCurrency.times(bundle.nativeCurrencyPrice)
+  }
 
   // only accounts for volume through white listed tokens
   let trackedAmountUSD = getTrackedVolumeUSD(amount0Total, token0 as Token, amount1Total, token1 as Token, pair as Pair)
@@ -459,17 +546,20 @@ export function handleSwap(event: Swap): void {
 
   // update global values, only used tracked amounts for volume
   let honeyswap = HoneyswapFactory.load(getFactoryAddress())
-  honeyswap.totalVolumeUSD = honeyswap.totalVolumeUSD.plus(trackedAmountUSD)
-  honeyswap.totalVolumeNativeCurrency = honeyswap.totalVolumeNativeCurrency.plus(trackedAmountNativeCurrency)
-  honeyswap.untrackedVolumeUSD = honeyswap.untrackedVolumeUSD.plus(derivedAmountUSD)
-  honeyswap.txCount = honeyswap.txCount.plus(ONE_BI)
+  if (honeyswap) {
+    honeyswap.totalVolumeUSD = honeyswap.totalVolumeUSD.plus(trackedAmountUSD)
+    honeyswap.totalVolumeNativeCurrency = honeyswap.totalVolumeNativeCurrency.plus(trackedAmountNativeCurrency)
+    honeyswap.untrackedVolumeUSD = honeyswap.untrackedVolumeUSD.plus(derivedAmountUSD)
+    honeyswap.txCount = honeyswap.txCount.plus(ONE_BI)
+  }
 
   // save entities
   pair.save()
   token0.save()
   token1.save()
-  honeyswap.save()
-
+  if (honeyswap) {
+    honeyswap.save()
+  }
   let transaction = Transaction.load(event.transaction.hash.toHexString())
   if (transaction === null) {
     transaction = new Transaction(event.transaction.hash.toHexString())

@@ -166,11 +166,11 @@ type Transaction @entity {
   blockNumber: BigInt!
   "Timestamp of transaction"
   timestamp: BigInt!
-  "This is not the reverse of Mint.transaction; it is only used to
-  track incomplete mints (similar for burns and swaps)"
-  mints: [Mint]!
-  burns: [Burn]!
-  swaps: [Swap]!
+  # This is not the reverse of Mint.transaction; it is only used to
+  # track incomplete mints (similar for burns and swaps)
+  mints: [Mint!]!
+  burns: [Burn!]!
+  swaps: [Swap!]!
 }
 
 type Mint @entity {
